@@ -1,6 +1,6 @@
 /* eslint-disable jest/valid-title */
 import { render, screen } from "@testing-library/react";
-import uerEvent from "@testing-library/user-event";
+import userEvent from "@testing-library/user-event";
 import { rest } from "msw";
 import { setupServer } from "msw/node";
 import catsMock from "../../../mocks/cats.json";
@@ -36,11 +36,31 @@ describe("Test Pets Component", () => {
   test("Test render only Female cates with Female filter", async () => {
     render(<Pets />);
     const cards = await screen.findAllByRole("article");
-    uerEvent.selectOptions(screen.getByLabelText(/Gender/i),'female')
+    userEvent.selectOptions(screen.getByLabelText(/Gender/i),'female')
     expect(screen.getAllByRole('article').length).toBe(3);
-    expect(screen.getAllByRole('article')).toStrictEqual([cards[0],cards[2],cards[4]])
-    
+    expect(screen.getAllByRole('article')).toStrictEqual(
+      [cards[0],
+      cards[2],
+      cards[4]])
+
   });
 
- 
+
 });
+// favorite testing
+test("Test render only Favoured cats with filter after marking one as favorite",async()=>
+{
+  render(<Pets />);
+  const cards = await screen.findAllByRole('article');
+  const  outLineHearts=screen.getAllByAltText('outline hearts');
+     if(outLineHearts.length>0){
+      userEvent.click(outLineHearts[0]);
+     }
+
+
+  userEvent.selectOptions( screen.getByText(/Favourite/i),'favoured');
+  expect(screen.getAllByRole('article').length).toBe(3);
+
+
+}
+);
